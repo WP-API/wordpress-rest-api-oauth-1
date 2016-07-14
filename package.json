@@ -4,7 +4,11 @@
   "description": "WordPrest REST API OAuth 1 Client",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d ./"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/joehoyle/wordpress-rest-api-oauth-1.git"
   },
   "author": "joehoyle",
   "license": "MIT",
