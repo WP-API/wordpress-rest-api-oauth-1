@@ -39,7 +39,7 @@ const demoApi = new api({
 
 ### Using the WordPress Authentication Broker
 
-To establish a connection to a WordPress site that accepts the WordPress REST API Broker:
+To establish a connection to a WordPress site that accepts the [WordPress REST API Broker](https://apps.wp-api.org/):
 
 ```JS
 import api from 'wordpress-rest-api-oauth-1'
