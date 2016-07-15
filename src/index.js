@@ -17,7 +17,7 @@ export default class {
 
 	getConsumerToken() {
 		if ( ! this.config.brokerCredentials ) {
-			throw new error( 'Config does not include a brokerCredentials value.' )
+			throw new Error( 'Config does not include a brokerCredentials value.' )
 		}
 
 		this.config.credentials.client = this.config.brokerCredentials.client
@@ -40,7 +40,7 @@ export default class {
 	getRequestToken() {
 
 		if ( ! this.config.callbackURL ) {
-			throw new error( 'Config does not include a callbackURL value.' )
+			throw new Error( 'Config does not include a callbackURL value.' )
 		}
 		return this.post( this.config.url + 'oauth1/request', {
 			callback_url: this.config.callbackURL,
