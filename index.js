@@ -29,7 +29,7 @@ var _class = function () {
 		}
 		this.config = _extends({
 			credentials: {},
-			brokerURL: 'https://app.wp-api.org/'
+			brokerURL: 'https://apps.wp-api.org/'
 		}, config);
 	}
 
@@ -39,7 +39,7 @@ var _class = function () {
 			var _this = this;
 
 			if (!this.config.brokerCredentials) {
-				throw new error('Config does not include a brokerCredentials value.');
+				throw new Error('Config does not include a brokerCredentials value.');
 			}
 
 			this.config.credentials.client = this.config.brokerCredentials.client;
@@ -64,7 +64,7 @@ var _class = function () {
 			var _this2 = this;
 
 			if (!this.config.callbackURL) {
-				throw new error('Config does not include a callbackURL value.');
+				throw new Error('Config does not include a callbackURL value.');
 			}
 			return this.post(this.config.url + 'oauth1/request', {
 				callback_url: this.config.callbackURL
