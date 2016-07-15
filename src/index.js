@@ -110,7 +110,7 @@ export default class {
 
 	removeCredentials() {
 		delete this.config.credentials.token
-		window.localStorage.remoteItem( 'tokenCredentials' )
+		window.localStorage.removeItem( 'tokenCredentials' )
 	}
 
 	restoreCredentials() {

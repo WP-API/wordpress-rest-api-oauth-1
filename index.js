@@ -140,7 +140,7 @@ var _class = function () {
 		key: 'removeCredentials',
 		value: function removeCredentials() {
 			delete this.config.credentials.token;
-			window.localStorage.remoteItem('tokenCredentials');
+			window.localStorage.removeItem('tokenCredentials');
 		}
 	}, {
 		key: 'restoreCredentials',
