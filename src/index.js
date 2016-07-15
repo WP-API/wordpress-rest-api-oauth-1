@@ -9,7 +9,7 @@ export default class {
 		}
 		this.config = {
 			credentials: {},
- 			brokerURL: 'https://app.wp-api.org/',
+ 			brokerURL: 'https://apps.wp-api.org/',
  			...config,
 		}
 
