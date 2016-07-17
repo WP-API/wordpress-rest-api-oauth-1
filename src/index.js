@@ -1,4 +1,4 @@
-import querystring from 'query-string'
+import qs from 'qs'
 import oauth from 'oauth-1.0a'
 
 export default class {
@@ -45,7 +45,7 @@ export default class {
 		return this.post( this.config.url + 'oauth1/request', {
 			callback_url: this.config.callbackURL,
 		} ).then( data => {
-			var redirectURL = this.config.url + 'oauth1/authorize?' + querystring.stringify({
+			var redirectURL = this.config.url + 'oauth1/authorize?' + qs.stringify({
 				oauth_token: data.oauth_token,
 				oauth_callback: this.config.callbackURL,
 			})
@@ -76,7 +76,7 @@ export default class {
 		var args = {}
 		var savedCredentials = window.localStorage.getItem( 'requestTokenCredentials' )
 		if ( window.location.href.indexOf( '?' ) ) {
-			args = querystring.parse( window.location.href.split('?')[1] )
+			args = qs.parse( window.location.href.split('?')[1] )
 		}
 
 		if ( ! this.config.credentials.client ) {
@@ -122,8 +122,7 @@ export default class {
 	}
 
 	get( url, data ) {
-		url = url += ! data ? '' : ( '?' + querystring.stringify( data ) )
-		return this.request( 'GET', url )
+		return this.request( 'GET', url, data )
 	}
 
 	post( url, data ) {
@@ -147,11 +146,31 @@ export default class {
 			url = this.config.url + 'wp-json' + url
 		}
 
+		if ( method === 'GET' && data ) {
+			// must be decoded before being passed to ouath
+			url += '?' + decodeURIComponent( qs.stringify(data) )
+			data = null
+		}
+
+		var oauthData = null
+
+		if ( data ) {
+			oauthData = {}
+			Object.keys( data ).forEach( key => {
+				var value = data[ key ]
+				if ( Array.isArray( value ) ) {
+					value.forEach( ( val, index ) => oauthData[ key + '[' + index + ']' ] = val )
+				} else {
+					oauthData[ key ] = value
+				}
+			})
+		}
+
 		if ( this.oauth ) {
 			var oauthData = this.oauth.authorize( {
 				method: method,
 				url: url,
-				data: data
+				data: oauthData
 			}, this.config.credentials.token ? this.config.credentials.token : null )
 		}
 
@@ -168,12 +187,12 @@ export default class {
 			method: method,
 			headers: headers,
 			mode: 'cors',
-			body: ['GET','HEAD'].indexOf( method ) > -1 ? null : querystring.stringify( data )
+			body: ['GET','HEAD'].indexOf( method ) > -1 ? null : qs.stringify( data )
 		} )
 		.then( response => {
 			if ( response.headers.get( 'Content-Type' ) && response.headers.get( 'Content-Type' ).indexOf( 'x-www-form-urlencoded' ) > -1 ) {
 				return response.text().then( text => {
-					return querystring.parse( text )
+					return qs.parse( text )
 				})
 			}
 			return response.text().then( text => {

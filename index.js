@@ -8,9 +8,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _queryString = require('query-string');
+var _qs = require('qs');
 
-var _queryString2 = _interopRequireDefault(_queryString);
+var _qs2 = _interopRequireDefault(_qs);
 
 var _oauth = require('oauth-1.0a');
 
@@ -69,7 +69,7 @@ var _class = function () {
 			return this.post(this.config.url + 'oauth1/request', {
 				callback_url: this.config.callbackURL
 			}).then(function (data) {
-				var redirectURL = _this2.config.url + 'oauth1/authorize?' + _queryString2.default.stringify({
+				var redirectURL = _this2.config.url + 'oauth1/authorize?' + _qs2.default.stringify({
 					oauth_token: data.oauth_token,
 					oauth_callback: _this2.config.callbackURL
 				});
@@ -104,7 +104,7 @@ var _class = function () {
 			var args = {};
 			var savedCredentials = window.localStorage.getItem('requestTokenCredentials');
 			if (window.location.href.indexOf('?')) {
-				args = _queryString2.default.parse(window.location.href.split('?')[1]);
+				args = _qs2.default.parse(window.location.href.split('?')[1]);
 			}
 
 			if (!this.config.credentials.client) {
@@ -154,8 +154,7 @@ var _class = function () {
 	}, {
 		key: 'get',
 		value: function get(url, data) {
-			url = url += !data ? '' : '?' + _queryString2.default.stringify(data);
-			return this.request('GET', url);
+			return this.request('GET', url, data);
 		}
 	}, {
 		key: 'post',
@@ -184,11 +183,33 @@ var _class = function () {
 				url = this.config.url + 'wp-json' + url;
 			}
 
+			if (method === 'GET' && data) {
+				// must be decoded before being passed to ouath
+				url += '?' + decodeURIComponent(_qs2.default.stringify(data));
+				data = null;
+			}
+
+			var oauthData = null;
+
+			if (data) {
+				oauthData = {};
+				Object.keys(data).forEach(function (key) {
+					var value = data[key];
+					if (Array.isArray(value)) {
+						value.forEach(function (val, index) {
+							return oauthData[key + '[' + index + ']'] = val;
+						});
+					} else {
+						oauthData[key] = value;
+					}
+				});
+			}
+
 			if (this.oauth) {
 				var oauthData = this.oauth.authorize({
 					method: method,
 					url: url,
-					data: data
+					data: oauthData
 				}, this.config.credentials.token ? this.config.credentials.token : null);
 			}
 
@@ -205,11 +226,11 @@ var _class = function () {
 				method: method,
 				headers: headers,
 				mode: 'cors',
-				body: ['GET', 'HEAD'].indexOf(method) > -1 ? null : _queryString2.default.stringify(data)
+				body: ['GET', 'HEAD'].indexOf(method) > -1 ? null : _qs2.default.stringify(data)
 			}).then(function (response) {
 				if (response.headers.get('Content-Type') && response.headers.get('Content-Type').indexOf('x-www-form-urlencoded') > -1) {
 					return response.text().then(function (text) {
-						return _queryString2.default.parse(text);
+						return _qs2.default.parse(text);
 					});
 				}
 				return response.text().then(function (text) {
