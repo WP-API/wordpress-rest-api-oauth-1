@@ -21,12 +21,12 @@ export default class {
 		}
 
 		this.config.credentials.client = this.config.brokerCredentials.client
-		return this.post( this.config.brokerURL + 'broker/connect', {
+		return this.post( `${this.config.brokerURL}broker/connect`, {
 			server_url: this.config.url,
 		} ).then( data => {
 
 			if ( data.status && data.status === 'error' ) {
-				throw { message: 'Broker error: ' + data.message, code: data.type }
+				throw { message: `Broker error: ${data.message}`, code: data.type }
 			}
 			this.config.credentials.client = {
 				public: data.client_token,
@@ -42,13 +42,13 @@ export default class {
 		if ( ! this.config.callbackURL ) {
 			throw new Error( 'Config does not include a callbackURL value.' )
 		}
-		return this.post( this.config.url + 'oauth1/request', {
+		return this.post( `${this.config.url}oauth1/request`, {
 			callback_url: this.config.callbackURL,
 		} ).then( data => {
-			var redirectURL = this.config.url + 'oauth1/authorize?' + qs.stringify({
+			var redirectURL = `${this.config.url}oauth1/authorize?${qs.stringify({
 				oauth_token: data.oauth_token,
 				oauth_callback: this.config.callbackURL,
-			})
+			})}`
 
 			this.config.credentials.token = {
 				secret: data.oauth_token_secret,
@@ -59,7 +59,7 @@ export default class {
 	}
 
 	getAccessToken( oauthVerifier ) {
-		return this.post( this.config.url + 'oauth1/access', {
+		return this.post( `${this.config.url}oauth1/access`, {
 			oauth_verifier: oauthVerifier,
 		} ).then( data => {
 			this.config.credentials.token = {
@@ -143,12 +143,12 @@ export default class {
 		}
 
 		if ( url.indexOf( 'http' ) !== 0 ) {
-			url = this.config.url + 'wp-json' + url
+			url = `${this.config.url}wp-json${url}`
 		}
 
 		if ( method === 'GET' && data ) {
 			// must be decoded before being passed to ouath
-			url += '?' + decodeURIComponent( qs.stringify(data) )
+			url += `?${decodeURIComponent( qs.stringify(data) )}`
 			data = null
 		}
 
@@ -159,7 +159,7 @@ export default class {
 			Object.keys( data ).forEach( key => {
 				var value = data[ key ]
 				if ( Array.isArray( value ) ) {
-					value.forEach( ( val, index ) => oauthData[ key + '[' + index + ']' ] = val )
+					value.forEach( ( val, index ) => oauthData[ `${key}[${index}]` ] = val )
 				} else {
 					oauthData[ key ] = value
 				}
