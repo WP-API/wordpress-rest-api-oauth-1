@@ -3,16 +3,16 @@ import oauth from 'oauth-1.0a'
 
 export default class {
 	constructor( config ) {
+		this.url = config.rest_url ? config.rest_url : ( config.url + 'wp-json' )
+		this.url = this.url.replace( /\/$/, '' )
+		this.credentials = config.credentials
 
-		if ( ! config.url ) {
-			throw new error( 'Please specify a url in the config object.' )
+		if ( this.credentials ) {
+			this.oauth = new oauth({
+				consumer: config.credentials.client,
+				signature_method: 'HMAC-SHA1'
+			})
 		}
-		this.config = {
-			credentials: {},
- 			brokerURL: 'https://apps.wp-api.org/',
- 			...config,
-		}
-
 	}
 
 	getConsumerToken() {
@@ -134,16 +134,8 @@ export default class {
 	}
 
 	request( method, url, data = null ) {
-
-		if ( this.config.credentials.client ) {
-			this.oauth = new oauth({
-				consumer: this.config.credentials.client,
-				signature_method: 'HMAC-SHA1'
-			})
-		}
-
 		if ( url.indexOf( 'http' ) !== 0 ) {
-			url = `${this.config.url}wp-json${url}`
+			url = this.url + url
 		}
 
 		if ( method === 'GET' && data ) {
