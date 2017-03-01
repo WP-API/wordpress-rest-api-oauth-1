@@ -24,13 +24,16 @@ var _class = function () {
 	function _class(config) {
 		_classCallCheck(this, _class);
 
-		if (!config.url) {
-			throw new error('Please specify a url in the config object.');
+		this.url = config.rest_url ? config.rest_url : config.url + 'wp-json';
+		this.url = this.url.replace(/\/$/, '');
+		this.credentials = config.credentials;
+
+		if (this.credentials) {
+			this.oauth = new _oauth2.default({
+				consumer: config.credentials.client,
+				signature_method: 'HMAC-SHA1'
+			});
 		}
-		this.config = _extends({
-			credentials: {},
-			brokerURL: 'https://apps.wp-api.org/'
-		}, config);
 	}
 
 	_createClass(_class, [{
@@ -169,18 +172,10 @@ var _class = function () {
 	}, {
 		key: 'request',
 		value: function request(method, url) {
-			var data = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-
-
-			if (this.config.credentials.client) {
-				this.oauth = new _oauth2.default({
-					consumer: this.config.credentials.client,
-					signature_method: 'HMAC-SHA1'
-				});
-			}
+			var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
 			if (url.indexOf('http') !== 0) {
-				url = this.config.url + 'wp-json' + url;
+				url = this.url + url;
 			}
 
 			if (method === 'GET' && data) {
