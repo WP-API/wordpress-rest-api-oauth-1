@@ -13,6 +13,7 @@ export default class {
 				signature_method: 'HMAC-SHA1'
 			})
 		}
+		this.config = config
 	}
 
 	getConsumerToken() {

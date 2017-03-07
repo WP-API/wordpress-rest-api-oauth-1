@@ -34,6 +34,7 @@ var _class = function () {
 				signature_method: 'HMAC-SHA1'
 			});
 		}
+		this.config = config;
 	}
 
 	_createClass(_class, [{
