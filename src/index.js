@@ -114,6 +114,16 @@ export default class {
 		window.localStorage.removeItem( 'tokenCredentials' )
 	}
 
+	hasCredentials() {
+		return this.config.credentials
+			&& this.config.credentials.client
+			&& this.config.credentials.client.public
+			&& this.config.credentials.client.secret
+			&& this.config.credentials.token
+			&& this.config.credentials.token.public
+			&& this.config.credentials.token.secret
+	}
+
 	restoreCredentials() {
 		var savedCredentials = window.localStorage.getItem( 'tokenCredentials' )
 		if ( savedCredentials ) {
