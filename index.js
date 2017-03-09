@@ -147,6 +147,11 @@ var _class = function () {
 			window.localStorage.removeItem('tokenCredentials');
 		}
 	}, {
+		key: 'hasCredentials',
+		value: function hasCredentials() {
+			return this.config.credentials && this.config.credentials.client && this.config.credentials.client.public && this.config.credentials.client.secret && this.config.credentials.token && this.config.credentials.token.public && this.config.credentials.token.secret;
+		}
+	}, {
 		key: 'restoreCredentials',
 		value: function restoreCredentials() {
 			var savedCredentials = window.localStorage.getItem('tokenCredentials');
