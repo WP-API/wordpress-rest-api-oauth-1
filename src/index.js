@@ -182,7 +182,7 @@ export default class {
 			'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 		}
 
-		if ( this.oauth ) {
+		if ( this.oauth && this.config.credentials.token ) {
 			headers = {...headers, ...this.oauth.toHeader( oauthData )}
 		}
 
