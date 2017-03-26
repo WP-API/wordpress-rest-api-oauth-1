@@ -163,6 +163,12 @@ export default class {
 				var value = data[ key ]
 				if ( Array.isArray( value ) ) {
 					value.forEach( ( val, index ) => oauthData[ `${key}[${index}]` ] = val )
+				} else if( typeof value === 'object' ) {
+					for (var property in value) {
+						if (value.hasOwnProperty(property)) {
+							oauthData[ `${key}[${property}]`] = value[property]
+						}
+					}
 				} else {
 					oauthData[ key ] = value
 				}
