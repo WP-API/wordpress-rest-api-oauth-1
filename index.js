@@ -227,7 +227,12 @@ var _class = function () {
 				'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
 			};
 
-			if (this.oauth && this.config.credentials.token) {
+			var requestUrls = [this.config.url + 'oauth1/request'];
+
+			/**
+    * Only attach the oauth headers if we have a request token, or it is a request to the `oauth/request` endpoint.
+    */
+			if (this.oauth && this.config.credentials.token || requestUrls.indexOf(url) > -1) {
 				headers = _extends({}, headers, this.oauth.toHeader(oauthData));
 			}
 
