@@ -6,6 +6,7 @@ export default class {
 		this.url = config.rest_url ? config.rest_url : ( config.url + 'wp-json' )
 		this.url = this.url.replace( /\/$/, '' )
 		this.credentials = config.credentials
+		this.useBody = config.useBody || false
 
 		if ( this.credentials ) {
 			this.oauth = new oauth({
@@ -195,16 +196,23 @@ export default class {
 		/**
 		 * Only attach the oauth headers if we have a request token, or it is a request to the `oauth/request` endpoint.
 		 */
-		if ( this.oauth && this.config.credentials.token || requestUrls.indexOf( url ) > -1 ) {
-			headers = {...headers, ...this.oauth.toHeader( oauthData )}
+		if (!this.useBody && this.oauth && this.config.credentials.token || requestUrls.indexOf(url) > -1) {
+			headers = { ...headers, ...this.oauth.toHeader(oauthData) }
 		}
 
-		return fetch( url, {
+		let body = '';
+		if (this.useBody) {
+			body = `${qs.stringify(data)}&${qs.stringify(oauthData)}`
+		} else {
+			body = ['GET', 'HEAD'].indexOf(method) > -1 ? null : qs.stringify(data)
+		}
+
+		return fetch(url, {
 			method: method,
 			headers: headers,
 			mode: 'cors',
-			body: ['GET','HEAD'].indexOf( method ) > -1 ? null : qs.stringify( data )
-		} )
+			body,
+		})
 		.then( response => {
 			if ( response.headers.get( 'Content-Type' ) && response.headers.get( 'Content-Type' ).indexOf( 'x-www-form-urlencoded' ) > -1 ) {
 				return response.text().then( text => {
