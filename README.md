@@ -21,7 +21,7 @@ const demoApi = new api({
 ```
 ### Using OAuth 1 Directly
 
-To communication and authenticate using OAuth 1 with your WordPress site directly:
+To communicate and authenticate using OAuth 1 with your WordPress site directly:
 
 ```JS
 import api from 'wordpress-rest-api-oauth-1'
@@ -66,7 +66,7 @@ demoApi.getConsumerToken().then( token => {
 
 There is two ways to get authentication tokens, one "high level" function, or you can implement your own flow using the underlaying function.
 
-##### The Quick Way
+##### The Quick Way
 
 ```JS
 demoApi.authorize().then( function() {
